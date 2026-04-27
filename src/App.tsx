@@ -13,9 +13,6 @@ import {
   Tooltip, ResponsiveContainer, BarChart, Bar,
   PieChart, Pie, Cell
 } from 'recharts';
-
-// ==================== TYPES ====================
-
 interface AgentStatus {
   name: string;
   status: string;
@@ -24,7 +21,6 @@ interface AgentStatus {
   tools: string[];
   memorySize: number;
 }
-
 interface Prediction {
   asset: string;
   timeframe: string;
@@ -42,7 +38,6 @@ interface Prediction {
   modelUsed?: string;
   llmAnalysis?: any;
 }
-
 interface ArbitrageOpp {
   type: string;
   asset: string;
@@ -55,9 +50,6 @@ interface ArbitrageOpp {
   strategy?: string;
   recommended?: string;
 }
-
-// ==================== MOCK DATA ====================
-
 const generateMockHistory = () => {
   const data = [];
   const now = new Date();
@@ -73,7 +65,6 @@ const generateMockHistory = () => {
   }
   return data;
 };
-
 const generateMockPredictions = (): Prediction[] => [
   {
     asset: "BTC", timeframe: "5m", prediction: "up", confidence: 0.72,
@@ -103,7 +94,6 @@ const generateMockPredictions = (): Prediction[] => [
     llmAnalysis: { analysis: "SOL consolidating after recent rally. Wait for breakout confirmation above $145." }
   }
 ];
-
 const generateMockArbitrage = (): ArbitrageOpp[] => [
   {
     type: "direction_mismatch", asset: "BTC",
@@ -124,7 +114,6 @@ const generateMockArbitrage = (): ArbitrageOpp[] => [
     recommended: "size_aggressively"
   }
 ];
-
 const generateMockSystemStatus = () => ({
   status: "running",
   agents: {
@@ -142,17 +131,12 @@ const generateMockSystemStatus = () => ({
   totalPredictions: 312,
   accuracy: 0.58
 });
-
 const COLORS = { up: '#22c55e', down: '#ef4444', neutral: '#6b7280', primary: '#3b82f6', secondary: '#8b5cf6', accent: '#f59e0b' };
-
-// ==================== COMPONENTS ====================
-
 const Card = ({ children, className = "", onClick, style }: { children: React.ReactNode; className?: string; onClick?: () => void; style?: React.CSSProperties }) => (
   <div className={`bg-slate-900/80 backdrop-blur-sm border border-slate-800 rounded-xl p-5 ${className}`} onClick={onClick} style={style}>
     {children}
   </div>
 );
-
 const Badge = ({ children, variant = 'default' }: { children: React.ReactNode; variant?: 'default' | 'up' | 'down' | 'warning' | 'success' | 'info' }) => {
   const variants: Record<string, string> = {
     default: 'bg-slate-800 text-slate-300',
@@ -164,7 +148,6 @@ const Badge = ({ children, variant = 'default' }: { children: React.ReactNode; v
   };
   return <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${variants[variant]}`}>{children}</span>;
 };
-
 const AgentCard = ({ agent, index }: { agent: AgentStatus; index: number }) => {
   const [expanded, setExpanded] = useState(false);
   const icons: Record<string, React.ReactNode> = {
@@ -176,7 +159,6 @@ const AgentCard = ({ agent, index }: { agent: AgentStatus; index: number }) => {
     search: 'text-blue-400', data: 'text-cyan-400', prediction: 'text-purple-400',
     llm_reasoning: 'text-rose-400', risk: 'text-amber-400', feedback: 'text-emerald-400'
   };
-
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.1 }}>
       <Card className="hover:border-slate-700 transition-colors cursor-pointer" onClick={() => setExpanded(!expanded)}>
@@ -229,7 +211,6 @@ const AgentCard = ({ agent, index }: { agent: AgentStatus; index: number }) => {
     </motion.div>
   );
 };
-
 const PredictionCard = ({ pred, index }: { pred: Prediction; index: number }) => (
   <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.1 }}>
     <Card className="border-l-4" style={{ borderLeftColor: pred.prediction === 'up' ? COLORS.up : COLORS.down }}>
@@ -253,7 +234,6 @@ const PredictionCard = ({ pred, index }: { pred: Prediction; index: number }) =>
           <div className="text-xs text-slate-500">Confidence</div>
         </div>
       </div>
-      
       <div className="grid grid-cols-4 gap-3 mt-4">
         <div className="bg-slate-800/50 rounded-lg p-3 text-center">
           <div className="text-xs text-slate-500">Upside Prob</div>
@@ -272,7 +252,6 @@ const PredictionCard = ({ pred, index }: { pred: Prediction; index: number }) =>
           <Badge variant={pred.riskLevel === 'low' ? 'success' : pred.riskLevel === 'medium' ? 'warning' : 'down'}>{pred.riskLevel}</Badge>
         </div>
       </div>
-      
       {pred.llmAnalysis?.analysis && (
         <div className="mt-3 p-3 bg-rose-950/30 border border-rose-900/30 rounded-lg">
           <div className="flex items-center gap-2 mb-1">
@@ -282,9 +261,7 @@ const PredictionCard = ({ pred, index }: { pred: Prediction; index: number }) =>
           <p className="text-xs text-slate-400 leading-relaxed">{pred.llmAnalysis.analysis}</p>
         </div>
       )}
-      
       <div className="mt-3 text-xs text-slate-500 leading-relaxed">{pred.reasoning}</div>
-      
       {(pred.polymarketPrice !== null || pred.kalshiPrice !== null) && (
         <div className="mt-3 flex gap-4">
           {pred.polymarketPrice !== null && (
@@ -306,7 +283,6 @@ const PredictionCard = ({ pred, index }: { pred: Prediction; index: number }) =>
     </Card>
   </motion.div>
 );
-
 const ArbitrageCard = ({ opp, index }: { opp: ArbitrageOpp; index: number }) => {
   const typeColors: Record<string, string> = {
     direction_mismatch: 'border-amber-500/50',
@@ -314,7 +290,6 @@ const ArbitrageCard = ({ opp, index }: { opp: ArbitrageOpp; index: number }) => 
     aligned_signal: 'border-green-500/50',
     confidence_divergence: 'border-blue-500/50'
   };
-  
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.1 }}>
       <Card className={`border-l-4 ${typeColors[opp.type] || 'border-slate-600'}`}>
@@ -349,7 +324,6 @@ const ArbitrageCard = ({ opp, index }: { opp: ArbitrageOpp; index: number }) => 
     </motion.div>
   );
 };
-
 const PipelineVisualizer = () => {
   const steps = [
     { name: 'Search', icon: <Search className="w-5 h-5" />, desc: 'Polymarket + Kalshi', color: 'bg-blue-500', agent: 'SearchAgent' },
@@ -359,7 +333,6 @@ const PipelineVisualizer = () => {
     { name: 'Risk', icon: <Shield className="w-5 h-5" />, desc: 'Kelly Criterion', color: 'bg-amber-500', agent: 'RiskAgent' },
     { name: 'Feedback', icon: <RefreshCw className="w-5 h-5" />, desc: 'Hermes Loop', color: 'bg-emerald-500', agent: 'FeedbackAgent' }
   ];
-
   return (
     <div className="flex items-center gap-2 overflow-x-auto pb-2">
       {steps.map((step, i) => (
@@ -380,11 +353,7 @@ const PipelineVisualizer = () => {
     </div>
   );
 };
-
-// ==================== MAIN APP ====================
-
 const API = 'http://localhost:8000';
-
 export default function App() {
   const [activeTab, setActiveTab] = useState<'dashboard'|'agents'|'predictions'|'arbitrage'|'pipeline'>('dashboard');
   const [systemStatus, setSystemStatus] = useState<any>(null);
@@ -393,7 +362,6 @@ export default function App() {
   const [history, setHistory] = useState(generateMockHistory());
   const [isSimulating, setIsSimulating] = useState(false);
   const [pipelineLog, setPipelineLog] = useState<string[]>([]);
-
   const fetchStatus = async () => {
     try {
       const res = await fetch(`${API}/api/status`);
@@ -401,7 +369,6 @@ export default function App() {
       else setSystemStatus(generateMockSystemStatus());
     } catch { setSystemStatus(generateMockSystemStatus()); }
   };
-
   const fetchPredictions = async () => {
     try {
       const res = await fetch(`${API}/api/predictions/history?limit=20`);
@@ -427,12 +394,10 @@ export default function App() {
     } catch {}
     setPredictions(generateMockPredictions());
   };
-
   useEffect(() => {
     fetchStatus();
     fetchPredictions();
     setArbitrageOpps(generateMockArbitrage());
-
     const interval = setInterval(() => {
       setHistory(prev => {
         const newData = [...prev.slice(1)];
@@ -447,16 +412,13 @@ export default function App() {
         return newData;
       });
     }, 5000);
-
     return () => clearInterval(interval);
   }, []);
-
   const runSimulation = async () => {
     setIsSimulating(true);
     setPipelineLog(['🚀 Starting pipeline...']);
     const assets = ['BTC', 'ETH', 'SOL'];
     const newPreds: Prediction[] = [];
-
     for (const asset of assets) {
       for (const timeframe of ['5m', '15m']) {
         setPipelineLog(prev => [...prev, `⏳ Running ${asset} ${timeframe} prediction...`]);
@@ -486,7 +448,6 @@ export default function App() {
             throw new Error('API error');
           }
         } catch {
-          // fallback mock prediction
           setPipelineLog(prev => [...prev, `⚠️ ${asset} ${timeframe}: using statistical fallback`]);
           newPreds.push({
             asset, timeframe,
@@ -507,13 +468,11 @@ export default function App() {
         }
       }
     }
-
     setPipelineLog(prev => [...prev, `🎉 Pipeline complete! ${newPreds.length} predictions generated.`]);
     setPredictions(prev => [...newPreds, ...prev].slice(0, 20));
     await fetchStatus();
     setIsSimulating(false);
   };
-
   const accuracyData = [
     { name: 'BTC 5m', accuracy: 62, samples: 142 },
     { name: 'BTC 15m', accuracy: 58, samples: 98 },
@@ -521,13 +480,11 @@ export default function App() {
     { name: 'ETH 15m', accuracy: 52, samples: 89 },
     { name: 'SOL 5m', accuracy: 51, samples: 76 }
   ];
-
   const regimeData = [
     { name: 'Trending', value: 45, color: '#22c55e' },
     { name: 'Mean Rev', value: 30, color: '#3b82f6' },
     { name: 'Random', value: 25, color: '#6b7280' }
   ];
-
   const assetDistribution = [
     { name: 'BTC', value: 35, color: '#f59e0b' },
     { name: 'ETH', value: 30, color: '#8b5cf6' },
@@ -536,10 +493,9 @@ export default function App() {
     { name: 'ADA', value: 5, color: '#ef4444' },
     { name: 'DOGE', value: 5, color: '#22c55e' }
   ];
-
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200">
-      {/* Header */}
+      {}
       <header className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
@@ -574,8 +530,7 @@ export default function App() {
           </div>
         </div>
       </header>
-
-      {/* Navigation */}
+      {}
       <nav className="border-b border-slate-800 bg-slate-900/30">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex gap-1 overflow-x-auto">
@@ -596,14 +551,13 @@ export default function App() {
           </div>
         </div>
       </nav>
-
-      {/* Main Content */}
+      {}
       <main className="max-w-7xl mx-auto px-4 py-6">
         <AnimatePresence mode="wait">
-          {/* DASHBOARD */}
+          {}
           {activeTab === 'dashboard' && (
             <motion.div key="dashboard" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
-              {/* Stats Grid */}
+              {}
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                 <Card>
                   <div className="flex items-center gap-3">
@@ -660,8 +614,7 @@ export default function App() {
                   </div>
                 </Card>
               </div>
-
-              {/* Charts Row */}
+              {}
               <div className="grid md:grid-cols-2 gap-6">
                 <Card>
                   <h3 className="text-sm font-semibold text-slate-300 mb-4 flex items-center gap-2">
@@ -693,7 +646,6 @@ export default function App() {
                     </AreaChart>
                   </ResponsiveContainer>
                 </Card>
-
                 <Card>
                   <h3 className="text-sm font-semibold text-slate-300 mb-4 flex items-center gap-2">
                     <BarChart3 className="w-4 h-4 text-emerald-400" />Accuracy by Asset/Timeframe
@@ -709,8 +661,7 @@ export default function App() {
                   </ResponsiveContainer>
                 </Card>
               </div>
-
-              {/* Multi-Asset Distribution */}
+              {}
               <div className="grid md:grid-cols-2 gap-6">
                 <Card>
                   <h3 className="text-sm font-semibold text-slate-300 mb-4 flex items-center gap-2">
@@ -733,7 +684,6 @@ export default function App() {
                     ))}
                   </div>
                 </Card>
-
                 <Card>
                   <h3 className="text-sm font-semibold text-slate-300 mb-4 flex items-center gap-2">
                     <Brain className="w-4 h-4 text-purple-400" />Market Regime Distribution
@@ -756,8 +706,7 @@ export default function App() {
                   </div>
                 </Card>
               </div>
-
-              {/* Pipeline Log */}
+              {}
               {pipelineLog.length > 0 && (
                 <Card>
                   <h3 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
@@ -772,8 +721,7 @@ export default function App() {
                   </div>
                 </Card>
               )}
-
-              {/* Recent Predictions */}
+              {}
               <div>
                 <h3 className="text-sm font-semibold text-slate-300 mb-4 flex items-center gap-2">
                   <Target className="w-4 h-4 text-amber-400" />Recent Predictions
@@ -784,8 +732,7 @@ export default function App() {
               </div>
             </motion.div>
           )}
-
-          {/* AGENTS */}
+          {}
           {activeTab === 'agents' && (
             <motion.div key="agents" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
               <div className="flex items-center justify-between">
@@ -800,8 +747,7 @@ export default function App() {
               </div>
             </motion.div>
           )}
-
-          {/* PREDICTIONS */}
+          {}
           {activeTab === 'predictions' && (
             <motion.div key="predictions" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
               <div className="grid md:grid-cols-4 gap-4">
@@ -826,7 +772,6 @@ export default function App() {
                   <div className="text-xs text-emerald-400 mt-1">Well calibrated</div>
                 </Card>
               </div>
-
               <div>
                 <h3 className="text-lg font-semibold text-slate-200 mb-4">All Predictions</h3>
                 <div className="space-y-3">
@@ -835,8 +780,7 @@ export default function App() {
               </div>
             </motion.div>
           )}
-
-          {/* ARBITRAGE */}
+          {}
           {activeTab === 'arbitrage' && (
             <motion.div key="arbitrage" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
               <div className="grid md:grid-cols-3 gap-4">
@@ -856,7 +800,6 @@ export default function App() {
                   <div className="text-xs text-blue-400 mt-1">Primary arbitrage pair</div>
                 </Card>
               </div>
-
               <div>
                 <h3 className="text-lg font-semibold text-slate-200 mb-4 flex items-center gap-2">
                   <Scale className="w-5 h-5 text-amber-400" />Arbitrage Opportunities
@@ -865,7 +808,6 @@ export default function App() {
                   {arbitrageOpps.map((opp, i) => <ArbitrageCard key={i} opp={opp} index={i} />)}
                 </div>
               </div>
-
               <Card>
                 <h3 className="text-sm font-semibold text-slate-300 mb-4">Arbitrage Strategies</h3>
                 <div className="grid md:grid-cols-2 gap-4">
@@ -887,15 +829,13 @@ export default function App() {
               </Card>
             </motion.div>
           )}
-
-          {/* PIPELINE */}
+          {}
           {activeTab === 'pipeline' && (
             <motion.div key="pipeline" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
               <Card>
                 <h3 className="text-lg font-semibold text-slate-200 mb-4">Agent Pipeline Flow</h3>
                 <PipelineVisualizer />
               </Card>
-
               <div className="grid md:grid-cols-2 gap-6">
                 <Card>
                   <h3 className="text-sm font-semibold text-slate-300 mb-4">Scaling Features</h3>
@@ -921,7 +861,6 @@ export default function App() {
                     ))}
                   </div>
                 </Card>
-
                 <Card>
                   <h3 className="text-sm font-semibold text-slate-300 mb-4">Data Sources & Models</h3>
                   <div className="space-y-3">
@@ -947,7 +886,6 @@ export default function App() {
                   </div>
                 </Card>
               </div>
-
               <Card>
                 <h3 className="text-sm font-semibold text-slate-300 mb-4">System Architecture</h3>
                 <div className="bg-slate-950 rounded-lg p-4 font-mono text-xs text-slate-400 overflow-x-auto">
@@ -984,8 +922,7 @@ export default function App() {
           )}
         </AnimatePresence>
       </main>
-
-      {/* Footer */}
+      {}
       <footer className="border-t border-slate-800 mt-12 py-6">
         <div className="max-w-7xl mx-auto px-4 text-center text-xs text-slate-600">
           <p>CryptoPredict Agents • Hermes Agent Framework • Kronos (github.com/shiyu-coder/Kronos) • OpenRouter LLM • Apify Data • Kelly Criterion</p>
