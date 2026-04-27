@@ -56,18 +56,22 @@ class DataAgent(BaseAgent):
             {"asset": asset, "bars": bars, "interval": interval}
         )
         
+        # APIFY_ENABLED=false skips Apify and goes straight to Binance.
+        # Set to true only when Apify trial/subscription is active.
+        apify_enabled = os.getenv("APIFY_ENABLED", "false").lower() == "true"
+
         try:
-            # Try Apify first, fallback to Binance
+            # Try Apify first (only if enabled), fallback to Binance
             data = None
             source = None
-            
-            if self.apify_token:
+
+            if self.apify_token and apify_enabled:
                 try:
                     data = await self.execute_tool("fetch_apify", asset=asset, bars=bars, interval=interval)
                     source = "apify"
                 except Exception as e:
                     self.logger.logger.warning(f"Apify fetch failed: {e}, falling back to Binance")
-            
+
             if data is None:
                 data = await self.execute_tool("fetch_binance", asset=asset, bars=bars, interval=interval)
                 source = "binance"
