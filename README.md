@@ -19,7 +19,11 @@
      https://github.com/YOUR_USERNAME/crypto-predict-agents/assets/YOUR_ASSET_ID/demo.mp4
 -->
 
-> 📹 **Video coming soon** — drop your `demo.mp4` here and update the link above.
+
+
+https://github.com/user-attachments/assets/fcc0192b-bcd6-4bec-89fe-191165b34165
+
+mp4` here and update the link above.
 
 ---
 
