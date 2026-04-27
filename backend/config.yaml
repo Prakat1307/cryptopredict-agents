@@ -9,8 +9,8 @@ llm:
   provider: "openrouter"
   base_url: "https://openrouter.ai/api/v1"
   model: "meta-llama/llama-3.1-8b-instruct:free"
-  fallback_model: "google/gemini-2.0-flash-exp:free"
-  max_tokens: 4096
+  fallback_model: "mistralai/mistral-7b-instruct:free"
+  max_tokens: 512
   temperature: 0.3
   api_key: "${OPENROUTER_API_KEY}"
 

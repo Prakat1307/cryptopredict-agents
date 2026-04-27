@@ -32,8 +32,8 @@ class LLMAgent(BaseAgent):
         self.api_key = os.getenv("OPENROUTER_API_KEY") or llm_config.get("api_key", "")
         self.base_url = llm_config.get("base_url", "https://openrouter.ai/api/v1")
         self.model = llm_config.get("model", "meta-llama/llama-3.1-8b-instruct:free")
-        self.fallback_model = llm_config.get("fallback_model", "google/gemini-2.0-flash-exp:free")
-        self.max_tokens = llm_config.get("max_tokens", 4096)
+        self.fallback_model = llm_config.get("fallback_model", "mistralai/mistral-7b-instruct:free")
+        self.max_tokens = llm_config.get("max_tokens", 512)
         self.temperature = llm_config.get("temperature", 0.3)
         
         self.http_client = httpx.AsyncClient(timeout=60.0)
@@ -232,9 +232,11 @@ Provide risk management advice. Keep under 50 words."""
         except httpx.HTTPStatusError as e:
             # Try fallback model
             if use_model != self.fallback_model:
-                self.logger.logger.warning(f"Primary model failed, trying fallback: {self.fallback_model}")
+                self.logger.logger.warning(f"Primary model failed ({e.response.status_code}), trying fallback: {self.fallback_model}")
                 return await self._call_llm(prompt, model=self.fallback_model)
-            raise
+            # Both models failed — return graceful fallback instead of crashing
+            self.logger.logger.error(f"All LLM models failed. Returning statistical fallback.")
+            return "Statistical model used — LLM unavailable. Check OpenRouter key and model availability."
         except Exception as e:
             self.logger.logger.error(f"LLM API error: {e}")
             raise
