@@ -1,0 +1,148 @@
+# Crypto Ads Agent System Configuration
+app:
+  name: "CryptoPredict Agents"
+  version: "1.0.0"
+  debug: false
+
+# LLM Configuration
+llm:
+  provider: "openrouter"
+  base_url: "https://openrouter.ai/api/v1"
+  model: "meta-llama/llama-3.1-8b-instruct:free"
+  fallback_model: "google/gemini-2.0-flash-exp:free"
+  max_tokens: 4096
+  temperature: 0.3
+  api_key: "${OPENROUTER_API_KEY}"
+
+# Agent Configuration
+agents:
+  search:
+    enabled: true
+    max_results: 10
+    platforms:
+      - polymarket
+      - kalshi
+  
+  data:
+    enabled: true
+    lookback_bars: 1000
+    intervals:
+      - "1m"
+      - "5m"
+      - "15m"
+      - "1h"
+    sources:
+      - binance
+      - apify
+  
+  prediction:
+    enabled: true
+    model: "NeoQuasar/Kronos-small"
+    tokenizer: "NeoQuasar/Kronos-Tokenizer-base"
+    device: "cpu"
+    max_context: 512
+    sample_count: 30
+    pred_lengths:
+      short: 5    # 5min
+      medium: 15  # 15min
+      long: 60    # 1h
+  
+  risk:
+    enabled: true
+    kelly_fraction: 0.5
+    max_position_size: 100.0
+    min_confidence: 0.55
+    stop_loss: 0.02
+    take_profit: 0.04
+  
+  feedback:
+    enabled: true
+    learning_rate: 0.1
+    memory_window: 100
+
+# Assets to track
+assets:
+  # Primary assets (BTC, ETH)
+  - symbol: "BTC"
+    name: "Bitcoin"
+    base: "BTC"
+    quote: "USDT"
+    polymarket_slug: "bitcoin"
+    kalshi_series: "KXBTC"
+    priority: "high"
+  
+  - symbol: "ETH"
+    name: "Ethereum"
+    base: "ETH"
+    quote: "USDT"
+    polymarket_slug: "ethereum"
+    kalshi_series: "KXETH"
+    priority: "high"
+  
+  # Extended assets (scaling)
+  - symbol: "SOL"
+    name: "Solana"
+    base: "SOL"
+    quote: "USDT"
+    polymarket_slug: "solana"
+    kalshi_series: "KXSOL"
+    priority: "medium"
+  
+  - symbol: "XRP"
+    name: "Ripple"
+    base: "XRP"
+    quote: "USDT"
+    polymarket_slug: "ripple"
+    kalshi_series: "KXXRP"
+    priority: "medium"
+  
+  - symbol: "ADA"
+    name: "Cardano"
+    base: "ADA"
+    quote: "USDT"
+    polymarket_slug: "cardano"
+    kalshi_series: "KXADA"
+    priority: "low"
+  
+  - symbol: "DOGE"
+    name: "Dogecoin"
+    base: "DOGE"
+    quote: "USDT"
+    polymarket_slug: "dogecoin"
+    kalshi_series: "KXDOGE"
+    priority: "low"
+
+# Apify Configuration
+apify:
+  actors:
+    crypto_prices: "datastorm/cryptoprices-api"
+    crypto_news: "sync-network/awesome-crypto-news-scraper"
+    crypto_ohlcv: "moving_beacon-owner1/my-actor-14"
+
+# Risk Parameters
+risk:
+  bankroll: 1000.0
+  max_kelly_fraction: 0.25
+  correlation_threshold: 0.7
+  diversification_max: 0.3
+
+# Scaling Configuration
+scaling:
+  arbitrage:
+    enabled: true
+    timeframes:
+      - "5m"
+      - "15m"
+    min_spread: 0.02
+  
+  multi_asset:
+    enabled: true
+    additional_assets:
+      - "SOL"
+      - "XRP"
+      - "ADA"
+      - "DOGE"
+    
+  parallel_execution:
+    enabled: true
+    max_workers: 4

@@ -1,0 +1,56 @@
+# ── Python ────────────────────────────────────────────────
+venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# ── Environment & Secrets ─────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── ML / Model Cache ──────────────────────────────────────
+backend/model_cache/
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.onnx
+
+# ── Logs ──────────────────────────────────────────────────
+backend/logs/
+*.log
+logs/
+
+# ── Node / Frontend ───────────────────────────────────────
+node_modules/
+dist/
+.vite/
+*.local
+
+# ── OS ────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDE ───────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── Testing ───────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ── Misc ──────────────────────────────────────────────────
+*.bak
+*.tmp
